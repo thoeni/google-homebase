@@ -2,20 +2,27 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"time"
 
+	"cloud.google.com/go/translate"
+	"golang.org/x/text/language"
 	"google.golang.org/api/dialogflow/v2"
+	"google.golang.org/api/option"
+	"os"
 )
 
 func HomeSuccessResponse(user string, d Device, locale string) dialogflow.GoogleCloudDialogflowV2WebhookResponse {
-
 	var resp string
+
 	switch locale {
 	case "it":
 		resp = it(user, d)
-	default:
+	case "en", "en-gb", "en-us":
 		resp = en(user, d)
+	default:
+		resp = any(locale[:2], user, d)
 	}
 
 	return dialogflow.GoogleCloudDialogflowV2WebhookResponse{
@@ -106,4 +113,43 @@ func en(user string, d Device) string {
 	}
 
 	return w.String()
+}
+
+func any(locale string, user string, d Device) string {
+	en := en(user, d)
+	if r, err := translateText(locale, en); err == nil {
+		return r
+	}
+
+	return en
+}
+
+func translateText(targetLanguage, text string) (string, error) {
+	gTranslateKey := os.Getenv("TRANSLATE_KEY")
+	if gTranslateKey == "" {
+		return text, nil
+	}
+
+	ctx := context.Background()
+
+	lang, err := language.Parse(targetLanguage)
+	if err != nil {
+		fmt.Println("Error when parsing language:", err)
+		return "", err
+	}
+
+	client, err := translate.NewClient(ctx, option.WithAPIKey(gTranslateKey))
+	if err != nil {
+		fmt.Println("Error when creating translate client:", err)
+		return "", err
+	}
+	defer client.Close()
+
+	resp, err := client.Translate(ctx, []string{text}, lang, nil)
+	if err != nil {
+		fmt.Println("Error when translating:", err)
+		return "", err
+	}
+
+	return resp[0].Text, nil
 }

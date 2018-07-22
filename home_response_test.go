@@ -2,9 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"testing"
+
+	"os"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_Template(t *testing.T) {
@@ -12,6 +15,9 @@ func Test_Template(t *testing.T) {
 	if err != nil {
 		t.FailNow()
 	}
+
+	os.Setenv("LAT", "51.5301")
+	os.Setenv("LNG", "-0.18556933")
 
 	r := AppleResponse{}
 	err = json.Unmarshal(b, &r)
