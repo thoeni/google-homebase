@@ -308,6 +308,7 @@
     "github.com/stretchr/testify/assert",
     "golang.org/x/text/language",
     "google.golang.org/api/dialogflow/v2",
+    "google.golang.org/api/option",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

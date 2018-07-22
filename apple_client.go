@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/pkg/errors"
+	"strings"
 )
 
 type AppleClient struct {
@@ -97,22 +98,30 @@ func FindDevice(c *AppleClient, deviceName string, user *string, device *Device)
 	return nil
 }
 
-func decryptEnvCredentials(username, password *string) error {
-	erru := decrypt(username)
-	errp := decrypt(password)
-	if erru != nil || errp != nil {
-		fmt.Printf("%v %v", erru, errp)
-		return errors.Errorf("not authorised to retrieve this information right now")
+func decryptEnvCredentials(creds string) (map[string]string, error) {
+	var res = make(map[string]string)
+
+	d, err := decrypt(creds)
+	if err != nil {
+		return res, errors.Wrap(err,"not authorised to retrieve this information right now")
 	}
 
-	return nil
+	c := strings.Split(d, "::")
+	if len(c) != 2 {
+		return res, errors.New("credentials split invalid")
+	}
+
+	res["username"] = c[0]
+	res["password"] = c[1]
+
+	return res, nil
 }
 
-func decrypt(s *string) error {
+func decrypt(s string) (string, error) {
 	// Decode string
-	decoded, err := base64.StdEncoding.DecodeString(*s)
+	decoded, err := base64.StdEncoding.DecodeString(s)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// Decrypt string
@@ -122,9 +131,8 @@ func decrypt(s *string) error {
 		CiphertextBlob: []byte(decoded),
 	})
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	*s = string(out.Plaintext)
-	return nil
+	return string(out.Plaintext), nil
 }

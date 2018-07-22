@@ -17,14 +17,13 @@ func handleRequest(r dialogflow.GoogleCloudDialogflowV2WebhookRequest) (dialogfl
 
 	var err error
 
-	username := os.Getenv("UNAME")
-	password := os.Getenv("PWD")
-	err = decryptEnvCredentials(&username, &password)
+	enCreds := os.Getenv("CREDS")
+	deCreds, err := decryptEnvCredentials(enCreds)
 	if err != nil {
 		return HomeFailureResponse(err.Error()), err
 	}
 
-	c := NewClient(username, password)
+	c := NewClient(deCreds["username"], deCreds["password"])
 
 	var d Device
 	var user string
