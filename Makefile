@@ -2,6 +2,9 @@
 test:
 	go test ./... -count=1
 
+lint:
+	gometalinter --vendor ./...
+
 .PHONY: zip
 zip:
 	GOOS=linux GOARCH=amd64 go build -o main *.go && zip deployment.zip main && rm main

@@ -4,15 +4,18 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"cloud.google.com/go/translate"
 	"golang.org/x/text/language"
 	"google.golang.org/api/dialogflow/v2"
 	"google.golang.org/api/option"
-	"os"
 )
 
+// HomeSuccessResponse returns a successful response to Google Home dialogflow
+// API by injecting data extracted from the device into the FulFillmentText
+// attribute
 func HomeSuccessResponse(user string, d Device, locale string) dialogflow.GoogleCloudDialogflowV2WebhookResponse {
 	var resp string
 
@@ -30,41 +33,34 @@ func HomeSuccessResponse(user string, d Device, locale string) dialogflow.Google
 	}
 }
 
+// HomeFailureResponse is a helper to create a failure response. It just inject
+// the message in input into the FulfillmentText attribute
 func HomeFailureResponse(message string) dialogflow.GoogleCloudDialogflowV2WebhookResponse {
 	return dialogflow.GoogleCloudDialogflowV2WebhookResponse{
 		FulfillmentText: message,
 	}
 }
 
+var itMonths = map[time.Month]string{
+	time.January:   "Gennaio",
+	time.February:  "Febbraio",
+	time.March:     "Marzo",
+	time.April:     "Aprile",
+	time.May:       "Maggio",
+	time.June:      "Giugno",
+	time.July:      "Luglio",
+	time.August:    "Agosto",
+	time.September: "Settembre",
+	time.October:   "Ottobre",
+	time.November:  "Novembre",
+	time.December:  "Dicembre",
+}
+
 func translateMonth(m time.Month) string {
-	switch m {
-	case time.January:
-		return "Gennaio"
-	case time.February:
-		return "Febbraio"
-	case time.March:
-		return "Marzo"
-	case time.April:
-		return "Aprile"
-	case time.May:
-		return "Maggio"
-	case time.June:
-		return "Giugno"
-	case time.July:
-		return "Luglio"
-	case time.August:
-		return "Agosto"
-	case time.September:
-		return "Settembre"
-	case time.October:
-		return "Ottobre"
-	case time.November:
-		return "Novembre"
-	case time.December:
-		return "Dicembre"
-	default:
-		return ""
+	if itMonth, exists := itMonths[m]; exists {
+		return itMonth
 	}
+	return m.String()
 }
 
 func it(user string, d Device) string {
@@ -143,7 +139,9 @@ func translateText(targetLanguage, text string) (string, error) {
 		fmt.Println("Error when creating translate client:", err)
 		return "", err
 	}
-	defer client.Close()
+	defer func() {
+		_ = client.Close()
+	}()
 
 	resp, err := client.Translate(ctx, []string{text}, lang, nil)
 	if err != nil {

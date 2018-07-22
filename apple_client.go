@@ -15,24 +15,29 @@ import (
 	"strings"
 )
 
+// AppleClient represents an HTTP client with Apple credentials injected
 type AppleClient struct {
 	Username string
 	Password string
 	Client   http.Client
 }
 
+// NewClient returns a pointer to a new AppleClient with the username/password
+// injected and a default timeout of 5 seconds
 func NewClient(u string, p string) *AppleClient {
 	c := AppleClient{
 		Username: u,
 		Password: p,
 		Client: http.Client{
-			Timeout: time.Duration(5 * time.Second),
+			Timeout: 5 * time.Second,
 		},
 	}
 
 	return &c
 }
 
+// AppleResponse struct is used to unmarshal the raw response from iCloud
+// services
 type AppleResponse struct {
 	UserInfo struct {
 		FirstName string `json:"firstName"`
@@ -40,6 +45,8 @@ type AppleResponse struct {
 	Devices []Device `json:"content"`
 }
 
+// Get on the AppleResponse receiver picks the device matching the requested
+// deviceName, error if the device does not exist
 func (r AppleResponse) Get(deviceName string) (Device, error) {
 	for _, d := range r.Devices {
 		if d.Name == deviceName {
@@ -50,6 +57,8 @@ func (r AppleResponse) Get(deviceName string) (Device, error) {
 	return Device{}, fmt.Errorf("cannot find device %s", deviceName)
 }
 
+// FindDevice calls iCloud fmipmobile service to retrieve the list of associated
+// devices
 func FindDevice(c *AppleClient, deviceName string, user *string, device *Device) error {
 
 	basicAuth := func(username, password string) string {
@@ -103,7 +112,7 @@ func decryptEnvCredentials(creds string) (map[string]string, error) {
 
 	d, err := decrypt(creds)
 	if err != nil {
-		return res, errors.Wrap(err,"not authorised to retrieve this information right now")
+		return res, errors.Wrap(err, "not authorised to retrieve this information right now")
 	}
 
 	c := strings.Split(d, "::")
@@ -128,7 +137,7 @@ func decrypt(s string) (string, error) {
 	sess := session.Must(session.NewSession())
 	svc := kms.New(sess, aws.NewConfig().WithRegion("eu-west-2"))
 	out, err := svc.Decrypt(&kms.DecryptInput{
-		CiphertextBlob: []byte(decoded),
+		CiphertextBlob: decoded,
 	})
 	if err != nil {
 		return "", err
