@@ -37,5 +37,9 @@ func (d Device) isHome() bool {
 
 	phoneLocation := s2.LatLngFromDegrees(d.Location.Lat, d.Location.Long)
 	homeLocation := s2.LatLngFromDegrees(homeLat, homeLong)
-	return phoneLocation.Distance(homeLocation).Abs() <= 0.25
+
+	var R = 6371e3 // earth radius in meters
+	distance := R * phoneLocation.Distance(homeLocation).Abs().Radians()
+
+	return distance <= 30 // threshold in meters
 }

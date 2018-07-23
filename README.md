@@ -13,6 +13,6 @@ This code can be deployed as aws lambda (to be exposed via Api Gateway as a POST
 This lambda has to be executed with a role that has access to KMS as the iCloud credentials are stored encrypted as env variables, therefore KMS access is needed in order to decrypt the credentials and issue the call to iCloud.
 
 Environment variables needed for this to work:
-- `CREDS`: iCloud username/password (encrypted with KMS) - in the format "username::password"
+- `CREDS`: iCloud username/password (encrypted with KMS) - in the format `username::password`
 - `LAT`: float for the homebase latitude
 - `LNG`: float for the homebase longitude
