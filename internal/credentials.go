@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// DecryptEnvCredentials fetches the credentials from the ENV vars and decrypts // them
 func DecryptEnvCredentials(creds string) (map[string]string, error) {
 	var res = make(map[string]string)
 

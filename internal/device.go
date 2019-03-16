@@ -9,6 +9,7 @@ import (
 	"github.com/thoeni/google-homebase/pkg/apple"
 )
 
+// IsHome given a device compares the location to the configured one in the ENV // variables
 func IsHome(d apple.Device) bool {
 	homeLat, err := strconv.ParseFloat(os.Getenv("LAT"), 64)
 	if err != nil {
