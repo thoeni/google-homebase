@@ -2,13 +2,12 @@ package internal
 
 import (
 	"encoding/json"
-	"github.com/thoeni/google-homebase/pkg/apple"
 	"io/ioutil"
+	"os"
 	"testing"
 
-	"os"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/thoeni/google-homebase/pkg/apple"
 )
 
 func Test_Template(t *testing.T) {

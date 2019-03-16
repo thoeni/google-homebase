@@ -42,22 +42,23 @@ func HomeFailureResponse(message string) dialogflow.GoogleCloudDialogflowV2beta1
 	}
 }
 
-var itMonths = map[time.Month]string{
-	time.January:   "Gennaio",
-	time.February:  "Febbraio",
-	time.March:     "Marzo",
-	time.April:     "Aprile",
-	time.May:       "Maggio",
-	time.June:      "Giugno",
-	time.July:      "Luglio",
-	time.August:    "Agosto",
-	time.September: "Settembre",
-	time.October:   "Ottobre",
-	time.November:  "Novembre",
-	time.December:  "Dicembre",
-}
-
 func translateMonth(m time.Month) string {
+
+	var itMonths = map[time.Month]string{
+		time.January:   "Gennaio",
+		time.February:  "Febbraio",
+		time.March:     "Marzo",
+		time.April:     "Aprile",
+		time.May:       "Maggio",
+		time.June:      "Giugno",
+		time.July:      "Luglio",
+		time.August:    "Agosto",
+		time.September: "Settembre",
+		time.October:   "Ottobre",
+		time.November:  "Novembre",
+		time.December:  "Dicembre",
+	}
+
 	if itMonth, exists := itMonths[m]; exists {
 		return itMonth
 	}

@@ -2,12 +2,12 @@ package internal
 
 import (
 	"encoding/json"
-	"github.com/thoeni/google-homebase/pkg/apple"
 	"io/ioutil"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/thoeni/google-homebase/pkg/apple"
 )
 
 func Test_FindByName(t *testing.T) {

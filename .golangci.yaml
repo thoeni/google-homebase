@@ -1,0 +1,19 @@
+run:
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - golint
+    - stylecheck
+    - interfacer
+    - unconvert
+    - dupl
+    - goconst
+    - goimports
+    - gocyclo
+    - unparam
+    - gocritic
+    - megacheck
+    - govet
+
+  fast: false
