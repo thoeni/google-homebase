@@ -12,7 +12,7 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/stretchr/testify v1.3.0
 	golang.org/x/net v0.0.0-20190313220215-9f648a60d977 // indirect
-	golang.org/x/sys v0.0.0-20190316082340-a2f829d7f35f // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2
 	google.golang.org/api v0.2.0
 )
